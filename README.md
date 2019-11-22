@@ -7,6 +7,11 @@ copy from  https://github.com/bearpaw/pytorch-classification.git
 * Multi-GPU support
 * Training progress bar with rich info
 * Training log and training curve visualization code (see `./utils/logger.py`)  
+## Support  
+Activation:Relu,Selu,Swish,Mish  
+Optimizer:SGD,Adam,Radam,adamW(+warm_up)  
+Init:Kaiming  
+Other:cutout  
 
 ## Training  
 python3 cifar.py
@@ -29,9 +34,4 @@ Note that the number of parameters are computed on the CIFAR-10 dataset.
 | DenseNet-BC (L=100, k=12) | 0.77               | 4.54               | 22.88              |
 | DenseNet-BC (L=190, k=40) | 25.62              | 3.32               | 17.17              |
 
-### Support  
-### Activation:Relu,Selu,Swish,Mish  
-### Optimizer:SGD,Adam,Radam,adamW(+warm_up)  
-### Init:Kaiming  
-### Other:cutout  
 
