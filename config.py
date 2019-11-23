@@ -22,9 +22,15 @@ class Config(object):
         workers=4
         num_classes=10 #classes
         resume = None #path to latest checkpoint
+        #label_smoothing
+        label_smooth = True
+        esp = 0.1
         # warmming_up
         warmming_up = False
         decay_epoch=1000
+        #mix up
+        mix_up= False
+        alpha = 0.2
 
         # Cutout
         cutout = None #set cutout flag
@@ -38,4 +44,4 @@ class Config(object):
         lookahead = False
         la_steps=5 
         la_alpha=0.5
-        logs = './logs/'+arch+str(depth)+optim+str(lr)+"_"+activation+"_"+init
+        logs = './logs/'+arch+str(depth)+optim+str(lr)+("_lookahead" if lookahead else "")+"_"+activation+"_"+init+("_cutout" if cutout else "")+("_mix_up"+str(alpha) if mix_up else "")+("_warmup"+str(decay_epoch) if warmming_up else "")+str('_label_smooth'+str(esp) if label_smooth else "")

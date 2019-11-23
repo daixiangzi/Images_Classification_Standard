@@ -1,10 +1,8 @@
 '''
 Training script for CIFAR-10/100
 Copyright (c) Wei YANG, 2017
-'''
-"""
 python3 cifar.py
-"""
+'''
 from __future__ import print_function
 
 import argparse
@@ -29,7 +27,9 @@ from tensorboardX import SummaryWriter
 from config import Config
 from MyDataset import MyDataset
 from utils.radam import RAdam,AdamW,Lookahead
+from utils.mix_up import mixup_data,mixup_criterion
 from Cutout import Cutout
+from utils.loss import Label_smoothing
 opt = Config()
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -100,7 +100,6 @@ def main():
     model = torch.nn.DataParallel(model).cuda()
     cudnn.benchmark = True
     print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters())/1000000.0))
-    criterion = nn.CrossEntropyLoss()
     if opt.optim=="SGD":
         optimizer = optim.SGD(model.parameters(), lr=opt.lr, momentum=opt.momentum, weight_decay=opt.weight_decay)
     elif opt.optim=="Adam":
@@ -137,6 +136,10 @@ def main():
 
     # Train and val
     #scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) 
+    if opt.label_smooth:
+        criterion = Label_smoothing(opt.num_classes,opt.esp)
+    else:
+        criterion = nn.CrossEntropyLoss()
     for epoch in range(opt.start_epoch, opt.epochs):
         adjust_learning_rate(optimizer, epoch)
         #if epoch%20==0:
@@ -198,10 +201,15 @@ def train(trainloader, model, criterion, optimizer, epoch, use_cuda):
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda(async=True)
         inputs, targets = torch.autograd.Variable(inputs), torch.autograd.Variable(targets)
-
+        if opt.mix_up:
+            inputs, targets_a, targets_b, lam = mixup_data(inputs, targets, opt.alpha)
+            loss_func = mixup_criterion(targets_a, targets_b, lam)
+            outputs = model(inputs)
+            loss = loss_func(criterion, outputs)
         # compute output
-        outputs = model(inputs)
-        loss = criterion(outputs, targets)
+        else:
+            outputs = model(inputs)
+            loss = criterion(outputs, targets)
 
         # measure accuracy and record loss
         prec1, prec5 = accuracy(outputs.data, targets.data, topk=(1, 5))
