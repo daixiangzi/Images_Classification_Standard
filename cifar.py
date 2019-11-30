@@ -30,6 +30,7 @@ from utils.radam import RAdam,AdamW,Lookahead
 from utils.mix_up import mixup_data,mixup_criterion
 from Cutout import Cutout
 from utils.loss import Label_smoothing
+import numpy as np
 opt = Config()
 model_names = sorted(name for name in models.__dict__
     if name.islower() and not name.startswith("__")
@@ -44,6 +45,7 @@ writer = SummaryWriter(log_dir=opt.logs)
 if opt.seed is None:
     opt.seed = random.randint(1, 10000)
 random.seed(opt.seed)
+np.random.seed(opt.seed)
 torch.manual_seed(opt.seed)
 if use_cuda:
     torch.cuda.manual_seed_all(opt.seed)
@@ -95,10 +97,11 @@ def main():
                     depth=opt.depth,
                     block_name='BasicBlock'#BasicBlock, Bottleneck,
                 )
+    if use_cuda:
+        model = torch.nn.DataParallel(model).cuda()
+        cudnn.benchmark = True
     if opt.init=='kaiming':
-        model.apply(weights_init)
-    model = torch.nn.DataParallel(model).cuda()
-    cudnn.benchmark = True
+        model.apply(weights_init) 
     print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters())/1000000.0))
     if opt.optim=="SGD":
         optimizer = optim.SGD(model.parameters(), lr=opt.lr, momentum=opt.momentum, weight_decay=opt.weight_decay)

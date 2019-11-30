@@ -23,17 +23,17 @@ class Config(object):
         num_classes=10 #classes
         resume = None #path to latest checkpoint
         #label_smoothing
-        label_smooth = True
+        label_smooth = False
         esp = 0.1
         # warmming_up
         warmming_up = False
         decay_epoch=1000
         #mix up
-        mix_up= False
-        alpha = 0.2
+        mix_up= True
+        alpha = 0.5#0.1
 
         # Cutout
-        cutout = None #set cutout flag
+        cutout = False #set cutout flag
         cutout_n = 5
         cutout_len = 5
 
