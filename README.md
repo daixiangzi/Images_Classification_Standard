@@ -11,7 +11,7 @@ copy from  https://github.com/bearpaw/pytorch-classification.git
 Activation: Relu,Selu,Swish,Mish  
 Optimizer: SGD,Adam,Radam,adamW(+warm_up)  
 Init: Kaiming  
-Other: cutout,lookahead
+Other: cutout,lookahead,mix_up,FRN
 
 ## Training  
 python3 cifar.py
