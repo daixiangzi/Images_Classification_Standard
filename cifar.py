@@ -1,6 +1,6 @@
 '''
 Training script for CIFAR-10/100
-Copyright (c) Wei YANG, 2017
+Copyright (c) Xiangzi Dai, 2019
 python3 cifar.py
 '''
 from __future__ import print_function
