@@ -1,6 +1,6 @@
 import torch
 class Label_smoothing(torch.nn.Module):
-        def __init__(self,num_classes,eps):
+        def __init__(self,num_classes,eps=0.1):
             super(Label_smoothing,self).__init__()
             self.eps = eps
             self.v = self.eps/num_classes
