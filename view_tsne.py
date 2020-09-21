@@ -55,10 +55,10 @@ if __name__ =="__main__":
         for index,lines in tqdm(enumerate(f)):
             img = cv2.imread(lines.strip().split(' ')[0])
             label = int(lines.strip().split(' ')[1])
-            # img =cv2.resize(img,(224,224))
+            img =cv2.resize(img,(224,224))
             img = img.astype(np.float32)
-            img = iaa.CenterPadToFixedSize(height=256,width=256)(image=img)
-            img = iaa.CropToFixedSize(width=224, height=224,position="center")(image=img)
+            #img = iaa.CenterPadToFixedSize(height=256,width=256)(image=img)
+            #img = iaa.CropToFixedSize(width=224, height=224,position="center")(image=img)
             img = (img / 255-0.5)/0.5
             img = img.transpose([2, 0, 1])
             img = torch.from_numpy(img)
@@ -77,7 +77,7 @@ if __name__ =="__main__":
             # if index ==2:
             #     break
             # pdb.set_trace()
-            res_data=np.zeros((len(datas),512)) #初始化一个np.array数组用于存数据
+            res_data=np.zeros((len(datas),512)) #初始化一个np.array数组用于存数据,512为输出维度
             res_label =np.zeros((len(datas),))
             for i in range(len(datas)):
                 res_data[i] = datas[i]
